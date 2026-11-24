@@ -1,0 +1,32 @@
+name: Security checks
+
+on:
+  push: # Trigger security checks on push events
+  pull_request: # Trigger security checks on pull requests
+  schedule: # Trigger security checks on a scheduled basis
+    - cron: '23 8 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read # Grant read-only access to repository contents for security checks
+
+# Security checks workflow for the project, including dependency scanning and other security-related tasks. It runs on push, pull request, scheduled cron jobs, and can be manually triggered via workflow dispatch.
+jobs:
+  validate: # Job to validate the security of the project
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      # Install project dependencies using npm ci to ensure a clean and reproducible installation
+      - name: Install dependencies
+        run: npm ci
+      - name: Run knip for dependency analysis
+        run: npm run knip
+      - name: Build production output
+        run: npm exec vite -- build # why not npm run build ? Because npm run build would also run the type-check step defined in the build script, which we already did separately.
+      # Run security checks defined in the project using npm run security:ci
+      - name: Run security checks
+        run: npm run security:ci

@@ -1,0 +1,10 @@
+{
+  // List of files to be included in the compilation
+  "files": [],
+  "references": [
+    // References to browser specific TypeScript configuration
+    { "path": "./tsconfig.app.json" },
+    // Reference to the Node.js specific TypeScript configuration
+    { "path": "./tsconfig.node.json" }
+  ]
+}

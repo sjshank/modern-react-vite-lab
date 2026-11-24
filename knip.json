@@ -1,0 +1,13 @@
+{
+  "$schema": "https://unpkg.com/knip@6/schema.json",
+  "entry": ["using-react-for-a-part-of-your-existing-page/sample.jsx"],
+  "project": [
+    "src/**/*.{ts,tsx}!",
+    "!src/**/*.{test,spec}.{ts,tsx}!",
+    "!src/test/**!",
+    "!src/tests/**!",
+    "src/**/*.css!",
+    "scripts/**/*.{js,mjs,ts,tsx}",
+    "*.config.{js,mjs,ts}"
+  ]
+}

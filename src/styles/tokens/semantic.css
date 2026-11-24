@@ -1,0 +1,9 @@
+/* semantic tokens - these are the role-based color values that reference primitive tokens */
+:root {
+  --dashboard-background: var(--palette-slate-50);
+  --dashboard-surface: var(--palette-white);
+  --dashboard-text: var(--palette-slate-900);
+  --dashboard-muted: var(--palette-slate-600);
+  --dashboard-sidebar: var(--palette-slate-800);
+  --dashboard-on-sidebar: var(--palette-white);
+}

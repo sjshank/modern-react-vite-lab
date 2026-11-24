@@ -1,0 +1,54 @@
+{
+  // TypeScript configuration for the application browser code
+  "compilerOptions": {
+    // Path to the incremental build info file
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
+    // ECMAScript target version
+    "target": "es2023",
+    // Library files to be included in the compilation
+    "lib": ["ES2023", "DOM"],
+    // Module system to be used in the compilation
+    "module": "esnext",
+    // Type definitions to be included in the compilation
+    "types": ["vite/client"],
+    // Allow importing arbitrary file extensions
+    "allowArbitraryExtensions": true,
+    // Skip type checking of declaration files
+    "skipLibCheck": true,
+    // Enable importing JSON modules as ES modules
+    "resolveJsonModule": true,
+
+    /* Bundler mode */
+    // Module resolution strategy for the bundler
+    "moduleResolution": "bundler",
+    // Allow importing TypeScript files with extensions
+    "allowImportingTsExtensions": true,
+    // Preserve the original module syntax in the output
+    "verbatimModuleSyntax": true,
+    // Force module detection even if not explicitly imported
+    "moduleDetection": "force",
+    // Do not emit output files
+    "noEmit": true,
+    // JSX code generation mode
+    "jsx": "react-jsx",
+    // Import aliases for application source directories
+    "paths": {
+      "@components/*": ["./src/components/*"],
+      "@hooks": ["./src/hooks"],
+      "@hooks/*": ["./src/hooks/*"],
+      "@contexts": ["./src/contexts"],
+      "@contexts/*": ["./src/contexts/*"],
+      "@features": ["./src/features"],
+      "@features/*": ["./src/features/*"]
+    },
+
+    /* Linting */
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "erasableSyntaxOnly": true,
+    "noFallthroughCasesInSwitch": true
+  },
+
+  // Files and directories to be included in the compilation
+  "include": ["src", "vite-env.d.ts"]
+}

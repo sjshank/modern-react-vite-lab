@@ -1,0 +1,62 @@
+name: CI Workflow Demo
+
+# This workflow runs the CI pipeline for the Vite sample app. It includes steps for installing dependencies, linting, type-checking, running tests, building the production output, and checking the production output.
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+# The workflow is triggered on push, pull request, and manual dispatch events.
+permissions:
+  # Permissions for the workflow
+  # The workflow only needs read access to the repository contents.
+  contents: read
+
+  # Install → lint → type-check → tests → build → production-output checks
+  # This ensures that the CI pipeline follows the correct sequence of steps for validating the Vite sample app.
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15 # sets the maximum time the CI job can run before being automatically cancelled
+    env:
+      VITE_APP_TITLE: Vite Environment Demo (CI)
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
+      - name: Prettier check
+        run: npm run format:check # runs the Prettier format check. Will it block the CI pipeline if formatting issues are found? Yes, it will fail the step if any files are not properly formatted.
+      - name: Lint
+        run: npm run lint # runs the ESLint linting step
+      - name: Type-check
+        run: npm run type-check # runs the TypeScript type-checking step
+      - name: Unit and component tests
+        run: npm test # runs the unit and component tests using Vitest
+      - name: Test i18n
+        run: npm run test:i18n # runs the i18n resource-integrity test
+      - name: Build production output
+        run: npm run build
+      - name: Check production output (non-blocking)
+        continue-on-error: true
+        run: npm run bundle:report && npm run security:check && npm run test:delivery
+      - name: Install Chromium
+        # Install Chromium browser for Playwright smoke tests
+        run: npm exec playwright -- install --with-deps chromium
+      - name: Smoke-test built app
+        # Run smoke tests on the built app using Playwright to ensure it loads correctly without browser errors
+        run: npm run test:smoke
+      - name: Upload smoke-test diagnostics
+        # Upload diagnostic artifacts if the smoke tests fail for further investigation
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ci-smoke-diagnostics
+          # Path to the diagnostic artifacts to be uploaded if the smoke tests fail
+          path: |
+            playwright-report/
+            test-results/
+          if-no-files-found: ignore # ignore if no diagnostic artifacts are found
+          retention-days: 7 # keep the uploaded diagnostic artifacts for 7 days

@@ -1,0 +1,18 @@
+/* theme tokens - these are the color values used for the inline theme */
+/* Why inline ? - Inline themes allow us to define theme-specific values that can be applied directly to elements without relying on global CSS variables. This is useful for dynamic theming and component-level theming. */
+
+@theme inline {
+  --color-dashboard-background: var(--dashboard-background);
+  --color-dashboard-surface: var(--dashboard-surface);
+  --color-dashboard-text: var(--dashboard-text);
+  --color-dashboard-muted: var(--dashboard-muted);
+  --color-dashboard-sidebar: var(--dashboard-sidebar);
+  --color-dashboard-on-sidebar: var(--dashboard-on-sidebar);
+}
+
+/* non-inline theme tokens - these are the theme values that are applied globally and not tied to specific elements */
+@theme {
+  --font-dashboard: system-ui, sans-serif;
+  --radius-dashboard-card: 0.75rem;
+  --spacing-dashboard-gap: 1rem;
+}

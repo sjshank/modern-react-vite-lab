@@ -1,0 +1,11 @@
+/* Theme specific styles */
+
+[data-dashboard-theme='dark'] {
+  /* Dark theme specific styles */
+  --dashboard-background: #0f172a;
+  --dashboard-surface: #1e293b;
+  --dashboard-text: #f8fafc;
+  --dashboard-muted: #cbd5e1;
+  --dashboard-sidebar: #334155;
+  --dashboard-on-sidebar: #ffffff;
+}

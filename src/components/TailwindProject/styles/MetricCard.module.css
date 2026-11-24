@@ -1,0 +1,13 @@
+/* @reference makes the Tailwind definitions available for compilation;  */
+@reference "../../../index.css";
+
+/* Component styles for Tailwind CSS */
+@layer components {
+  /* We use @apply to reuse Tailwind utilities inside a CSS rule */
+  /* Copies Tailwind utilities into a new CSS rule. */
+  /* what is rounded-dashboard-card ? */
+  /* It's a custom Tailwind utility class defined in the project's design tokens  */
+  .card {
+    @apply rounded-dashboard-card bg-dashboard-surface p-4 shadow-sm;
+  }
+}

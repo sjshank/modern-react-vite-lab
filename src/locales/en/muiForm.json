@@ -1,0 +1,12 @@
+{
+  "title": "Material UI Form",
+  "emailLabel": "Email address",
+  "emailHelp": "We'll never share your email.",
+  "submit": "Submit",
+  "switchToFrench": "Switch to French",
+  "switchToEnglish": "Switch to English",
+  "confirmDialogMessage": "Are you sure you want to perform this action?",
+  "cancel": "Cancel",
+  "confirm": "Confirm",
+  "emptyEmailAlert": "Please enter your email."
+}

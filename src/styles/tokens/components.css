@@ -1,0 +1,18 @@
+/* Component styles for Tailwind CSS */
+@layer components {
+  .flex-column {
+    /* We use @apply to reuse Tailwind utilities inside a CSS rule */
+    /* Copies Tailwind utilities into a new CSS rule. */
+    @apply flex flex-col;
+  }
+}
+
+/* Defines a custom Tailwind utility that supports variants */
+/* it's defining a custom tailwind utility class for focus outlines */
+@utility dashboard-focus {
+  outline: 2px solid var(--dashboard-text);
+  outline-offset: 3px;
+}
+/* Defines a custom variant for dark mode */
+/* give a reusable state selector a name. */
+@custom-variant dashboard-dark (&:where([data-dashboard-theme="dark"] *));

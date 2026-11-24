@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="%BASE_URL%favicon.svg" />
+    <!-- Preconnect to Google Fonts domains for improved font loading performance. It won't download the fonts itself, but it helps the browser establish early connections. -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!-- Load Google Fonts stylesheet but it still makes the browser request the fonts asynchronously. -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Geist:wght@400;700&display=swap&"
+      rel="stylesheet"
+    />
+    <!-- Preload high-priority image for improved loading performance -->
+    <link
+      rel="preload"
+      as="image"
+      href="https://picsum.photos/id/1018/1200/800"
+      fetchpriority="high"
+    />
+    <!-- <style>
+      body {
+        font-family: 'Geist', sans-serif;
+      }
+    </style> -->
+    <!-- meta viewport for responsive design -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>vite-sample-app</title>
+  </head>
+  <body>
+    <!-- Root element for the React application -->
+    <div id="root"></div>
+    <!-- Main application script loaded as a module for modern JavaScript support. By default, it is deferred and executed after the HTML is parsed. -->
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

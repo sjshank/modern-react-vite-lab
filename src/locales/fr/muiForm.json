@@ -1,0 +1,12 @@
+{
+  "title": "Formulaire Material UI",
+  "emailLabel": "Adresse e-mail",
+  "emailHelp": "Nous ne partagerons jamais votre adresse e-mail.",
+  "submit": "Envoyer",
+  "switchToFrench": "Passer en français",
+  "switchToEnglish": "Passer en anglais",
+  "confirmDialogMessage": "Êtes-vous sûr de vouloir effectuer cette action ?",
+  "cancel": "Annuler",
+  "confirm": "Confirmer",
+  "emptyEmailAlert": "Veuillez saisir une adresse e-mail."
+}
