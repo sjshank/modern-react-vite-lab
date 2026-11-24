@@ -18,7 +18,7 @@ export default {
     'type-enum': [
       2,
       'always',
-      ['feat', 'fix', 'maintenance', 'test', 'revert'],
+      ['feat', 'fix', 'maintenance', 'test', 'revert', 'chore'],
     ],
     // Enforce that the commit message must have a subject
     'subject-empty': [2, 'never'], // Disallow empty commit message subjects
