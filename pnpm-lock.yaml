@@ -53,7 +53,7 @@ importers:
         version: 10.0.1(eslint@10.15.0(jiti@2.7.0)(supports-color@7.2.0))
       '@lhci/cli':
         specifier: ^0.16.1
-        version: 0.16.1(@types/node@26.6.6)(supports-color@7.2.0)
+        version: 0.16.1(@types/node@26.6.6)(ajv@8.20.0)(supports-color@7.2.0)
       '@playwright/test':
         specifier: ^1.65.1
         version: 1.65.1
@@ -4841,16 +4841,16 @@ snapshots:
 
   '@keyv/serialize@1.1.1': {}
 
-  '@lhci/cli@0.16.1(@types/node@26.6.6)(supports-color@7.2.0)':
+  '@lhci/cli@0.16.1(@types/node@26.6.6)(ajv@8.20.0)(supports-color@7.2.0)':
     dependencies:
-      '@lhci/utils': 0.16.1(proxy-agent@8.0.3(supports-color@7.2.0))(supports-color@7.2.0)
+      '@lhci/utils': 0.16.1(ajv@8.20.0)(proxy-agent@8.0.3(supports-color@7.2.0))(supports-color@7.2.0)
       chrome-launcher: 0.13.4(supports-color@7.2.0)
       compression: 1.8.2(supports-color@7.2.0)
       debug: 4.4.3(supports-color@7.2.0)
       express: 4.22.3(supports-color@7.2.0)
       inquirer: 8.2.7(@types/node@26.6.6)
       isomorphic-fetch: 3.0.0
-      lighthouse: 13.6.0(proxy-agent@8.0.3(supports-color@7.2.0))(supports-color@7.2.0)
+      lighthouse: 13.6.0(ajv@8.20.0)(proxy-agent@8.0.3(supports-color@7.2.0))(supports-color@7.2.0)
       lighthouse-logger: 1.2.0(supports-color@7.2.0)
       open: 8.4.2
       proxy-agent: 8.0.3(supports-color@7.2.0)
@@ -4859,6 +4859,7 @@ snapshots:
       yargs-parser: 13.1.2
     transitivePeerDependencies:
       - '@types/node'
+      - ajv
       - bufferutil
       - encoding
       - kerberos
@@ -4868,14 +4869,15 @@ snapshots:
       - webpack
       - yauzl
 
-  '@lhci/utils@0.16.1(proxy-agent@8.0.3(supports-color@7.2.0))(supports-color@7.2.0)':
+  '@lhci/utils@0.16.1(ajv@8.20.0)(proxy-agent@8.0.3(supports-color@7.2.0))(supports-color@7.2.0)':
     dependencies:
       debug: 4.4.3(supports-color@7.2.0)
       isomorphic-fetch: 3.0.0
       js-yaml: 5.5.0
-      lighthouse: 13.6.0(proxy-agent@8.0.3(supports-color@7.2.0))(supports-color@7.2.0)
+      lighthouse: 13.6.0(ajv@8.20.0)(proxy-agent@8.0.3(supports-color@7.2.0))(supports-color@7.2.0)
       tree-kill: 1.2.2
     transitivePeerDependencies:
+      - ajv
       - bufferutil
       - encoding
       - proxy-agent
@@ -5685,8 +5687,8 @@ snapshots:
 
   agent-base@9.0.0: {}
 
-  ajv-formats@3.0.1:
-    dependencies:
+  ajv-formats@3.0.1(ajv@8.20.0):
+    optionalDependencies:
       ajv: 8.20.0
 
   ajv@6.15.0:
@@ -6783,11 +6785,11 @@ snapshots:
 
   lighthouse-stack-packs@1.12.3: {}
 
-  lighthouse@13.6.0(proxy-agent@8.0.3(supports-color@7.2.0))(supports-color@7.2.0):
+  lighthouse@13.6.0(ajv@8.20.0)(proxy-agent@8.0.3(supports-color@7.2.0))(supports-color@7.2.0):
     dependencies:
       '@paulirish/trace_engine': 0.0.67
       '@sentry/node': 11.16.0
-      ajv-formats: 3.0.1
+      ajv-formats: 3.0.1(ajv@8.20.0)
       axe-core: 4.14.0
       chrome-launcher: 1.2.3(supports-color@7.2.0)
       configstore: 8.0.0
@@ -6808,6 +6810,7 @@ snapshots:
       yargs: 18.2.0
       yargs-parser: 22.0.0
     transitivePeerDependencies:
+      - ajv
       - bufferutil
       - proxy-agent
       - rollup
