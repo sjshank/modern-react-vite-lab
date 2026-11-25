@@ -1,0 +1,33 @@
+name: Setup Node Project
+description: Set up Node.js environment and install project dependencies
+
+# Inputs for the action
+# node-version: The version of Node.js to use (default: 24)
+inputs:
+  # Add more inputs here if needed
+  node-version:
+    description: 'The version of Node.js to use'
+    required: false # Node.js version is optional, defaults to 24 if not specified
+    default: '24' # Default Node.js version if not specified
+
+# Outputs for the action
+# Add outputs here if needed
+runs:
+  # The action will run the following steps as a composite action
+  # what is a composite action ? - A composite action allows you to combine multiple steps into a single reusable action.
+  using: composite
+  # The steps below will be executed when this action is used
+  steps:
+    - name: Setup Node
+      uses: actions/setup-node@v7
+      with:
+        # The Node.js version to use and whether to cache npm dependencies
+        # node-version: The version of Node.js to use
+        # cache: Whether to cache npm dependencies (true/false)
+        node-version: ${{inputs.node-version}}
+        cache: 'npm'
+    - name: Install dependencies
+      # Install project dependencies using npm ci
+      # npm ci is preferred for CI environments as it installs dependencies based on the exact versions in package-lock.json
+      shell: bash
+      run: npm ci

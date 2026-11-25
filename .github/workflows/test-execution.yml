@@ -1,0 +1,35 @@
+# This workflow sets up a Node.js environment and runs tests for the project
+name: Test Execution Workflow
+
+# Triggered when the workflow is called, sets up Node.js and runs tests
+on:
+  # This workflow can be called by other workflows and allows specifying the Node.js version to use
+  workflow_call:
+    # Define the inputs for the workflow
+    # Currently, it only accepts the Node.js version to use
+    inputs:
+      node-version:
+        description: 'The version of Node.js to use'
+        type: string
+        required: false
+        default: '24'
+
+permissions:
+  contents: read # Grants read access to repository contents for the workflow
+
+  # Define the jobs for the workflow
+  # Currently, it only has a single job to run tests
+jobs:
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      # Set up the Node.js environment for the project
+      - uses: ./.github/actions/setup-node-project
+        with:
+          node-version: ${{inputs.node-version}}
+
+        # Run tests after setting up the Node.js environment
+      - name: Run tests
+        run: npm test
