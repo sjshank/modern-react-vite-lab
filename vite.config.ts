@@ -30,7 +30,7 @@ const reportOnlyCsp = [
   "style-src 'self' https://fonts.googleapis.com;", // Allow styles from self and Google Fonts else it will display warning in report-only mode browser console
   "img-src 'self' data: https://picsum.photos https://fastly.picsum.photos",
   "font-src 'self' data: https://fonts.gstatic.com;",
-  "connect-src 'self' https://*.ingest.us.sentry.io",
+  "connect-src 'self' https://dummyjson.com https://*.ingest.us.sentry.io",
   "worker-src 'self' blob:",
   // Allow style elements from self and Google Fonts. It will override the default style-src directive for style elements specifically.
   "style-src-elem 'self' 'unsafe-inline' https://fonts.googleapis.com",

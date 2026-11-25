@@ -12,7 +12,8 @@ export const fetchUsersApi = async (signal: AbortSignal): Promise<User[]> => {
       // If the response is not OK, throw an error to be caught in the catch block.
       throw new Error('Failed to fetch users');
     }
-    return response.json();
+    const data = await response.json();
+    return data.users;
   } catch (error) {
     console.error(error);
     throw new Error('Error occured while fetching users ', error as Error);
