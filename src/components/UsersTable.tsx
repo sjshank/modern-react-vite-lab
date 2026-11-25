@@ -1,6 +1,7 @@
 import type { SyntheticEvent } from 'react';
 
 // Individual event handlers for the UsersTable component
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const UsersTable = ({ users }: any) => {
   const handleClick = (userId: string) => {
     console.log('User clicked:', userId);
@@ -15,6 +16,7 @@ export const UsersTable = ({ users }: any) => {
         </tr>
       </thead>
       <tbody>
+        {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
         {users.map((user: any) => (
           <tr key={user.id} onClick={() => handleClick(user.id)}>
             <td>{user.name}</td>
@@ -61,6 +63,7 @@ export const ProfileTable = () => {
             name: 'Jane Smith',
             email: 'jane@example.com',
           },
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
         ].map((profile: any) => (
           <tr key={profile.id}>
             <td data-action="view" data-user-id={profile.id}>

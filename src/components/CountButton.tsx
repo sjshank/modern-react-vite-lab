@@ -1,5 +1,4 @@
-import React from 'react';
-
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const CountButton = (props: any) => {
   const { count, setCount } = props;
   const countText = count ? `Count is ${count}` : 'Start the count';
@@ -15,22 +14,24 @@ export const CountButton = (props: any) => {
 };
 
 // JSX version of the component below
-const JsxComponent = () => {
-  return (
-    <div>
-      <p>Hello</p>
-    </div>
-  );
-};
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+// const JsxComponent = () => {
+//   return (
+//     <div>
+//       <p>Hello</p>
+//     </div>
+//   );
+// };
 
 // JSX transpiled/compiled version of the component above by Babel
-const JsxCompiledComponent = () => {
-  return React.createElement(
-    'div',
-    null,
-    React.createElement('p', null, 'Hello'),
-  );
-};
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+// const JsxCompiledComponent = () => {
+//   return React.createElement(
+//     'div',
+//     null,
+//     React.createElement('p', null, 'Hello'),
+//   );
+// };
 
 // React.createElement() function in the example above return an object like this:
 console.log({

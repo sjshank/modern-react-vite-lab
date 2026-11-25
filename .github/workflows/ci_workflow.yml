@@ -2,10 +2,15 @@ name: CI Workflow Demo
 
 # This workflow runs the CI pipeline for the Vite sample app. It includes steps for installing dependencies, linting, type-checking, running tests, building the production output, and checking the production output.
 on:
-  push:
-  pull_request:
-  workflow_dispatch:
-# The workflow is triggered on push, pull request, and manual dispatch events.
+  push: # Trigger CI workflow on push events. Will it happen for all branches? Yes, by default it triggers for all branches unless specified otherwise.
+  pull_request: # Trigger CI workflow on pull request events. Will it happen for all branches? Yes, by default it triggers for all branches unless specified otherwise.
+  workflow_dispatch: # Allow manual triggering of the CI workflow via the GitHub Actions interface.
+
+  # Define concurrency settings to control how multiple runs of this workflow are handled.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }} # Group concurrency by workflow name and branch/ref to avoid running multiple jobs for the same workflow and branch simultaneously.
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }} # Cancel in-progress runs for non-main branches to avoid redundant CI runs.
+
 permissions:
   # Permissions for the workflow
   # The workflow only needs read access to the repository contents.
@@ -15,15 +20,28 @@ permissions:
   # This ensures that the CI pipeline follows the correct sequence of steps for validating the Vite sample app.
 jobs:
   ci:
+    name: CI Job
     runs-on: ubuntu-latest
     timeout-minutes: 15 # sets the maximum time the CI job can run before being automatically cancelled
+    strategy: # The strategy section defines a matrix of Node.js versions to test against.
+      fail-fast: false # ensures that the matrix does not stop all jobs if one fails
+      max-parallel: 3 # sets the maximum number of parallel jobs for the matrix
+      matrix: # Defines the matrix of Node.js versions to test against.
+        os: [ubuntu-latest] # Operating system to test against in the matrix
+        node-version: [20, 22, 24] # Node.js versions to test against in the matrix
+
+        exclude: # Exclude certain combinations from the matrix if needed
+          - os: ubuntu-latest
+            node-version: 20 # Exclude Node.js 20 on Ubuntu-latest from the matrix. Not supported or not desired for testing.
     env:
       VITE_APP_TITLE: Vite Environment Demo (CI)
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - name: Set up Node.js environment ${{matrix.node-version}}
+        uses: actions/setup-node@v7
         with:
-          node-version: 24
+          node-version: ${{ matrix.node-version }} # Use the Node.js version from the matrix
+          # Cache Node.js dependencies using npm to speed up subsequent workflow runs
           cache: npm
       - name: Install dependencies
         run: npm ci
@@ -51,7 +69,7 @@ jobs:
       - name: Upload smoke-test diagnostics
         # Upload diagnostic artifacts if the smoke tests fail for further investigation
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: ci-smoke-diagnostics
           # Path to the diagnostic artifacts to be uploaded if the smoke tests fail

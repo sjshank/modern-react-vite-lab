@@ -1,0 +1,55 @@
+# This workflow demonstrates the execution of lint, test, and build jobs using echo commands for simulation purposes.
+name: Execution Demo
+
+# The workflow is triggered on push and manual dispatch events.
+on:
+  push:
+  workflow_dispatch:
+
+    # The workflow only needs read access to the repository contents.
+permissions:
+  contents: read
+
+  # The workflow includes jobs for linting, testing, and building, all simulated using echo commands.
+jobs:
+  # The prettier-demo job simulates the testing process.
+  prettier-demo:
+    runs-on: ubuntu-latest
+    steps:
+      #  why it is not executing actual commands ? - Because this is just a simulation using echo commands.
+      - name: Simulate prettier
+        run: echo "Prettier job executed"
+        # This allows the prettier job to fail without failing the entire workflow.
+        continue-on-error: true
+
+  # The lint-demo job simulates the linting process.
+  lint-demo:
+    runs-on: ubuntu-latest
+    steps:
+      #  why it is not executing actual commands ? - Because this is just a simulation using echo commands.
+      - name: Simulate lint
+        run: echo "Lint job executed"
+
+  # The test-demo job simulates the testing process.
+  test-demo:
+    runs-on: ubuntu-latest
+    steps:
+      #  why it is not executing actual commands ? - Because this is just a simulation using echo commands.
+      - name: Simulate test
+        run: echo "Test job executed"
+
+    # The build-demo job simulates the build process.
+  build-demo:
+    # The build-demo job depends on the successful completion of lint-demo and test-demo jobs else it will not run.
+    needs: [lint-demo, test-demo]
+    timeout-minutes: 5 # sets the maximum time the build-demo job can run before being automatically cancelled
+    runs-on: ubuntu-latest
+    steps:
+      #  why it is not executing actual commands ? - Because this is just a simulation using echo commands.
+      - name: Simulate build
+        run: echo "Both prerequisite jobs succeeded"
+
+        # The following step runs only if the workflow was manually triggered using workflow_dispatch.
+        # It will not run for push events.
+      - if: github.event_name == 'workflow_dispatch'
+        run: echo "This was started manually"

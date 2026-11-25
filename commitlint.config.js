@@ -6,8 +6,8 @@ export default {
     {
       rules: {
         'ticket-header': ({ header }) => [
-          /^[a-z]+: \([A-Z][A-Z0-9]*-\d+\) \S(?:.*\S)?$/.test(header ?? ''),
-          'header must follow "type: (PROJECT-123) subject"',
+          /^[a-z]+: \S(?:.*\S)?$/.test(header ?? ''),
+          'header must follow "type: subject"',
         ],
       },
     },
@@ -29,5 +29,5 @@ export default {
 /*  
 ✖   subject may not be empty [subject-empty]
 ✖   type may not be empty [type-empty]
-✖   header must follow "type: (PROJECT-123) subject" [ticket-header]
+✖   header must follow "type: subject" [ticket-header]
 */
