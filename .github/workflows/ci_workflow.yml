@@ -19,6 +19,15 @@ permissions:
   # Install → lint → type-check → tests → build → production-output checks
   # This ensures that the CI pipeline follows the correct sequence of steps for validating the Vite sample app.
 jobs:
+  tests:
+    strategy:
+      fail-fast: false # ensures that the matrix does not stop all jobs if one fails
+      max-parallel: 2 # sets the maximum number of parallel jobs for the matrix
+      matrix: # Defines the matrix of Node.js versions to test against.
+        node-version: [22, 24] # Node.js versions to test against in the matrix
+    uses: ./.github/workflows/test-execution.yml
+    with:
+      node-version: ${{ matrix.node-version }} # Pass the Node.js version from the matrix to the test execution workflow
   ci:
     name: CI Job
     runs-on: ubuntu-latest
@@ -37,14 +46,10 @@ jobs:
       VITE_APP_TITLE: Vite Environment Demo (CI)
     steps:
       - uses: actions/checkout@v7
-      - name: Set up Node.js environment ${{matrix.node-version}}
-        uses: actions/setup-node@v7
-        with:
+      - uses: ./.github/actions/setup-node-project
+        with: # does it pass as inputs to the composite action  ? Yes, the inputs here are passed to the composite action as defined in its action.yml file.
           node-version: ${{ matrix.node-version }} # Use the Node.js version from the matrix
           # Cache Node.js dependencies using npm to speed up subsequent workflow runs
-          cache: npm
-      - name: Install dependencies
-        run: npm ci
       - name: Prettier check
         run: npm run format:check # runs the Prettier format check. Will it block the CI pipeline if formatting issues are found? Yes, it will fail the step if any files are not properly formatted.
       - name: Lint
