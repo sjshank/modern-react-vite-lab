@@ -19,7 +19,7 @@
     "test:security": "node --test scripts/security.test.mjs",
     "security:check": "node scripts/check-client-secrets.mjs",
     "audit:dependencies": "npm audit --audit-level=high",
-    "security:ci": "npm run audit:dependencies && npm run test:bundle && npm run test:security && npm run security:check && npm run test:delivery",
+    "security:ci": "npm run audit:dependencies && npm run test:bundle && npm run test:security && vite build && npm run security:check && npm run test:delivery",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "validate": "npm run lint && npm run audit:dependencies && npm run test:bundle && npm run test:security && npm run build:analyze && npm run security:check && npm run test:delivery",

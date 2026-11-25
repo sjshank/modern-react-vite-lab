@@ -26,8 +26,6 @@ jobs:
       - name: Run knip for dependency analysis
         continue-on-error: true
         run: npm run knip
-      - name: Build production output
-        run: npm exec vite -- build # why not npm run build ? Because npm run build would also run the type-check step defined in the build script, which we already did separately.
       # Run security checks defined in the project using npm run security:ci
       - name: Run security checks
         run: npm run security:ci

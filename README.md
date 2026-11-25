@@ -303,7 +303,7 @@ dist/assets/index-<hash>.js.gz
 dist/assets/index-<hash>.js.br
 ```
 
-Already-compressed formats such as PNG are excluded. This project's small `index.html` falls below the threshold and does not receive sidecars. Public-directory files are copied as-is, rather than processed by this generated-asset hook.
+Already-compressed formats such as PNG are excluded. Generated HTML at or below 1024 bytes does not receive sidecars; larger HTML is eligible when compression saves space. Public-directory files are copied as-is, rather than processed by this generated-asset hook.
 
 Vite's normal build output and `build.reportCompressedSize` only **report estimated gzip sizes**; they do not themselves create compressed files. The added plugin creates real files. The bundle-budget report still counts each original JavaScript file once, not its compressed copies.
 
@@ -348,7 +348,7 @@ In browser developer tools, inspect the entry JavaScript response for `Cache-Con
 
 This Vite preview provides dynamic gzip compression; it does not automatically negotiate the generated Brotli sidecars. Seeing a gzip preview response demonstrates negotiation, **not** that it served a generated sidecar. Production gzip/Brotli sidecar selection still needs host configuration.
 
-`npm run test:delivery` verifies gzip/Brotli files decompress to the final written original bytes, compression saves space for this build's eligible assets, small HTML and PNGs are skipped, preview sends `no-cache`, ETag revalidation returns 304, and preview negotiates gzip with an appropriate `Vary` header. It starts its own loopback preview server on an ephemeral port and closes it afterward.
+`npm run test:delivery` verifies gzip/Brotli files decompress to the final written original bytes, compression saves space for this build's eligible assets, small generated text files and PNGs are skipped, preview sends `no-cache`, ETag revalidation returns 304, and preview negotiates gzip with an appropriate `Vary` header. It starts its own loopback preview server on an ephemeral port and closes it afterward. Run a build first; `npm run security:ci` builds before running the delivery tests.
 
 ## Security
 
@@ -382,7 +382,7 @@ External links opened in a new tab use `rel="noopener noreferrer"` to prevent th
 
 ### Dependency and plugin hygiene
 
-`npm run audit:dependencies` runs `npm audit --audit-level=high` against the npm lockfile. `npm run security:ci` is the focused workflow used by GitHub Actions on pushes, pull requests, and a weekly schedule; Dependabot opens weekly npm and GitHub Actions update PRs. It checks dependency advisories, focused security tests, modified-file lint, Vite-config types, a Vite build, the emitted client bundle, and preview headers. Review updates, especially major changes to Vite or plugins, then run `npm ci` and the project checks before merging. Do not apply blind `npm audit fix --force` upgrades.
+`npm run audit:dependencies` runs `npm audit --audit-level=high` against the npm lockfile. `npm run security:ci` is the focused workflow used by GitHub Actions on pushes, pull requests, and a weekly schedule; Dependabot opens weekly npm and GitHub Actions update PRs. It checks dependency advisories, bundle-report and security tests, builds with Vite, checks the emitted client bundle, and tests delivery and preview headers. Review updates, especially major changes to Vite or plugins, then run `npm ci` and the project checks before merging. Do not apply blind `npm audit fix --force` upgrades.
 
 The broader `npm run validate` also checks every app file, the complete TypeScript build, and the real bundle-size budgets. At the time this security work was implemented, it stopped at existing lint errors in `CountButton.tsx`, `Gallery.tsx`, `UsersTable.tsx`, and `use-state.ts`; a direct build also found existing unused-component type errors in `CountButton.tsx`. Those unrelated app issues were not changed here. The focused security workflow is intentionally separate so these baseline issues do not prevent security checks from running.
 

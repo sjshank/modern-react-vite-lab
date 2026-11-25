@@ -10,13 +10,14 @@ const manifest = JSON.parse(
   readFileSync(resolve(dist, '.vite/manifest.json'), 'utf8'),
 );
 const files = [
-  ...new Set(
-    Object.values(manifest).flatMap((chunk) => [
+  ...new Set([
+    'index.html',
+    ...Object.values(manifest).flatMap((chunk) => [
       chunk.file,
       ...(chunk.css ?? []),
       ...(chunk.assets ?? []),
     ]),
-  ),
+  ]),
 ];
 const entry = manifest['index.html'];
 assert(entry?.isEntry, 'Run npm run build before the delivery tests.');
@@ -56,15 +57,17 @@ test('generated text assets retain originals and round-trip through gzip and Bro
   }
 });
 
-test('small HTML and already-compressed images are not precompressed', () => {
+test('small generated text assets and already-compressed images are not precompressed', () => {
   const html = readFileSync(resolve(dist, 'index.html'));
-  assert(
-    html.length > 0 && html.length <= 1024,
-    "Expected this demo's small HTML entry",
+  assert(html.length > 0, 'Expected a nonempty HTML entry');
+  const smallTextFiles = files.filter(
+    (file) =>
+      /\.(?:html|css|js|mjs|svg)$/.test(file) &&
+      readFileSync(resolve(dist, file)).length <= 1024,
   );
   const images = files.filter((file) => file.endsWith('.png'));
   assert(images.length > 0, 'Expected an imported PNG');
-  for (const file of ['index.html', ...images]) {
+  for (const file of [...smallTextFiles, ...images]) {
     assert(!existsSync(resolve(dist, `${file}.gz`)), file);
     assert(!existsSync(resolve(dist, `${file}.br`)), file);
   }
