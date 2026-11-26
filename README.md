@@ -11,7 +11,7 @@ number must contain digits. Allowed types are `feat`, `fix`, `maintenance`,
 `test`, and `revert`. Commitlint's default ignores, such as merge commits, still
 apply.
 
-Run `node --test scripts/commitlint.test.mjs scripts/hooks.test.mjs` to check the hooks and Commitlint configuration. The pre-commit hook formats then lints; the pre-push hook type-checks then builds. Both stop on failure.
+Run `node --test scripts/commitlint.test.mjs scripts/hooks.test.mjs` to check the hooks and Commitlint configuration. The pre-commit hook checks formatting then lints; the pre-push hook blocks pushes to the `main` branch on any remote, then type-checks and builds other pushes. Push a feature branch and open a pull request instead. Local hooks can be bypassed or disabled, so GitHub branch protection remains the enforcement. Both hooks stop on failure.
 
 Currently, two official plugins are available:
 
@@ -30,9 +30,15 @@ The workflow uses Node.js 24 and the npm lockfile. `npm run build` optimizes ass
 
 For Cloudflare builds, use Node.js 24, the committed npm lockfile, `npm run build` as the build command, and `dist` as the output directory. The committed `.npmrc` includes development dependencies even when `NODE_ENV=production`, because the build requires `sharp`, SVGO, Vite, and its plugins. Do not omit optional dependencies: Sharp needs its platform-specific native packages. If a custom install command is configured, use `npm ci --include=dev --include=optional`; clear the build cache and redeploy if an existing install is stale.
 
+The sample `wrangler.jsonc` deploys the built static site to Cloudflare Workers, with SPA fallback enabled. Change `name` to your Worker name, run `npm run build`, then use `npx wrangler deploy` after authenticating with Cloudflare. For Workers Builds, use `npm run build` as the build command and `npx wrangler deploy` as the deploy command. This configuration is for Workers, not Cloudflare Pages.
+
+For branch previews, connect the repository to the Worker, set `main` as the production branch, and enable **Preview Builds** under **Settings > Build > Branch control**. Set the preview command to `npx wrangler preview`. Pushes to other branches then build and update their own Preview; find its URL in the Worker's **Previews** section or the pull request comment. Previews are public by default; use Cloudflare Access if they need protection. The empty `previews` block is sufficient for this static app; if you add runtime variables or bindings, configure preview-safe values and resources separately. Build-time Vite variables must also be configured for preview builds, and client-side values are public.
+
+Existing Workers connected to Builds may need the one-time **Set up Worker Previews** switch before using this workflow; Cloudflare says the switch cannot be reversed. See [Cloudflare's preview build documentation](https://developers.cloudflare.com/workers/ci-cd/builds/build-branches/).
+
 To try it, push a branch and open a pull request, then select **Actions** on GitHub and open **CI Workflow Demo** to inspect each step's logs. Alternatively, select **Run workflow** in the Actions tab. Steps stop at the first failure unless explicitly configured otherwise. To block merging when CI fails, configure a branch protection rule or ruleset for the target branch and require the `ci` job's status check; the workflow alone does not enforce this.
 
-The bundle-budget step is advisory: failures remain visible but do not block CI. The secret scan and delivery tests are separate required checks; delivery still runs if the secret scan fails, provided the build succeeded and the job was not cancelled. The browser smoke test remains required. Local bundle-report and validation commands still enforce budgets.
+The bundle-budget step is advisory: failures remain visible but do not block CI. The secret scan and delivery tests are separate required checks; delivery still runs if the secret scan fails, provided the build succeeded and the job was not cancelled. The browser smoke test remains required. Local bundle-report and validation commands still enforce budgets
 
 ### Production browser smoke test
 

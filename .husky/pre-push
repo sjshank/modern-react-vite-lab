@@ -1,4 +1,11 @@
 set -e
 
+while read -r local_ref local_sha remote_ref remote_sha; do
+  if [ "$remote_ref" = "refs/heads/main" ]; then
+    echo "Push to main blocked. Push a branch and open a pull request instead." >&2
+    exit 1
+  fi
+done
+
 npm run type-check
 npm run build
