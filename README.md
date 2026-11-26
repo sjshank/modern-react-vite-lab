@@ -32,7 +32,7 @@ For Cloudflare builds, use Node.js 24, the committed npm lockfile, `npm run buil
 
 To try it, push a branch and open a pull request, then select **Actions** on GitHub and open **CI Workflow Demo** to inspect each step's logs. Alternatively, select **Run workflow** in the Actions tab. Steps stop at the first failure unless explicitly configured otherwise. To block merging when CI fails, configure a branch protection rule or ruleset for the target branch and require the `ci` job's status check; the workflow alone does not enforce this.
 
-The bundle-budget step is advisory: failures remain visible but do not block CI. The secret scan and delivery tests are separate required checks; delivery still runs if the secret scan fails, provided the build succeeded and the job was not cancelled. The browser smoke test remains required. Local bundle-report and validation commands still enforce budgets.
+The bundle-budget step is advisory: failures remain visible but do not block CI. The secret scan and delivery tests are separate required checks; delivery still runs if the secret scan fails, provided the build succeeded and the job was not cancelled. The browser smoke test remains required. Local bundle-report and validation commands still enforce budgets
 
 ### Production browser smoke test
 
