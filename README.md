@@ -11,7 +11,7 @@ number must contain digits. Allowed types are `feat`, `fix`, `maintenance`,
 `test`, and `revert`. Commitlint's default ignores, such as merge commits, still
 apply.
 
-Run `node --test scripts/commitlint.test.mjs scripts/hooks.test.mjs` to check the hooks and Commitlint configuration. The pre-commit hook formats then lints; the pre-push hook type-checks then builds. Both stop on failure.
+Run `node --test scripts/commitlint.test.mjs scripts/hooks.test.mjs` to check the hooks and Commitlint configuration. The pre-commit hook checks formatting then lints; the pre-push hook blocks pushes to the `main` branch on any remote, then type-checks and builds other pushes. Push a feature branch and open a pull request instead. Local hooks can be bypassed or disabled, so GitHub branch protection remains the enforcement. Both hooks stop on failure.
 
 Currently, two official plugins are available:
 
