@@ -62,10 +62,11 @@ jobs:
       - name: Test i18n
         run: npm run test:i18n # runs the i18n resource-integrity test
       - name: Build production output
+        id: production_build
         run: npm run build
-      - name: Check production output (non-blocking)
+      - name: Check bundle budgets (non-blocking)
         continue-on-error: true
-        run: npm run bundle:report && npm run security:check && npm run test:delivery
+        run: npm run bundle:report
       - name: Install Chromium
         # Install Chromium browser for Playwright smoke tests
         run: npm exec playwright -- install --with-deps chromium

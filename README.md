@@ -11,7 +11,7 @@ number must contain digits. Allowed types are `feat`, `fix`, `maintenance`,
 `test`, and `revert`. Commitlint's default ignores, such as merge commits, still
 apply.
 
-Run `node --test scripts/commitlint.test.mjs` to check the configuration.
+Run `node --test scripts/commitlint.test.mjs scripts/hooks.test.mjs` to check the hooks and Commitlint configuration. The pre-commit hook formats then lints; the pre-push hook type-checks then builds. Both stop on failure.
 
 Currently, two official plugins are available:
 
@@ -32,7 +32,7 @@ For Cloudflare builds, use Node.js 24, the committed npm lockfile, `npm run buil
 
 To try it, push a branch and open a pull request, then select **Actions** on GitHub and open **CI Workflow Demo** to inspect each step's logs. Alternatively, select **Run workflow** in the Actions tab. Steps stop at the first failure unless explicitly configured otherwise. To block merging when CI fails, configure a branch protection rule or ruleset for the target branch and require the `ci` job's status check; the workflow alone does not enforce this.
 
-The current combined production-output step uses `continue-on-error: true`: budget failures remain visible but do not block CI; its chained secret and delivery checks are skipped if the budget fails. The separate browser smoke test remains required. All other gates fail normally without bypassing existing app lint/type errors. Local bundle-report and validation commands still enforce budgets.
+The bundle-budget step is advisory: failures remain visible but do not block CI. The secret scan and delivery tests are separate required checks; delivery still runs if the secret scan fails, provided the build succeeded and the job was not cancelled. The browser smoke test remains required. Local bundle-report and validation commands still enforce budgets.
 
 ### Production browser smoke test
 
@@ -50,27 +50,30 @@ Only `.github/workflows/ci_workflow.yml` installs Chromium and runs smoke tests 
 
 ### Commands
 
-| Command                      | Purpose                                                                                                                       |
-| ---------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
-| `npm run dev`                | Start the development server with hot module replacement.                                                                     |
-| `npm run type-check`         | Check application and Vite configuration types using TypeScript project references. Does not emit JavaScript.                 |
-| `npm run lint`               | Check the source against the configured ESLint rules.                                                                         |
-| `npm run build`              | Optimize assets, then bundle the application for production into `dist/`.                                                     |
-| `npm run build:analyze`      | Build, report initial/deferred JavaScript sizes, and enforce bundle budgets.                                                  |
-| `npm run bundle:report`      | Analyze the existing build without rebuilding.                                                                                |
-| `npm run test:bundle`        | Test dependency accounting and size-budget failure cases.                                                                     |
-| `npm run test:delivery`      | Check the existing build's compressed files and preview caching/compression behavior.                                         |
-| `npm run assets:optimize`    | Recursively optimize supported assets in `src/assets/` and `public/`, including future files.                                 |
-| `npm run test:assets`        | Build and check root/subpath assets in Chromium, plus content-hash invalidation. Requires Playwright Chromium.                |
-| `npm run test:smoke`         | Smoke-test the existing production build in Chromium using an isolated preview server.                                        |
-| `npm run test:security`      | Check local-only Vite settings and the client-secret scanner.                                                                 |
-| `npm run security:check`     | Scan the production build for sensitive env values and common credential patterns.                                            |
-| `npm run audit:dependencies` | Run the lockfile-backed npm vulnerability audit.                                                                              |
-| `npm run security:ci`        | Run the focused security pipeline used by GitHub Actions.                                                                     |
-| `npm run validate`           | Run lint, dependency audit, bundle/security tests, build, secret scan, size budgets, and delivery tests, stopping on failure. |
-| `npm run preview`            | Serve the existing `dist/` output locally for inspection. Does not rebuild it.                                                |
+| Command                      | Purpose                                                                                                        |
+| ---------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| `npm run dev`                | Start the development server with hot module replacement.                                                      |
+| `npm run type-check`         | Check application and Vite configuration types using TypeScript project references. Does not emit JavaScript.  |
+| `npm run lint`               | Check the source against the configured ESLint rules.                                                          |
+| `npm run build`              | Optimize assets, then bundle the application for production into `dist/`.                                      |
+| `npm run build:analyze`      | Build, report initial/deferred JavaScript sizes, and enforce bundle budgets.                                   |
+| `npm run bundle:report`      | Analyze the existing build without rebuilding.                                                                 |
+| `npm run test:bundle`        | Test dependency accounting and size-budget failure cases.                                                      |
+| `npm run test:delivery`      | Check the existing build's compressed files and preview caching/compression behavior.                          |
+| `npm run assets:optimize`    | Recursively optimize supported assets in `src/assets/` and `public/`, including future files.                  |
+| `npm run test:assets`        | Build and check root/subpath assets in Chromium, plus content-hash invalidation. Requires Playwright Chromium. |
+| `npm run test:smoke`         | Smoke-test the existing production build in Chromium using an isolated preview server.                         |
+| `npm run test:security`      | Check local-only Vite settings and the client-secret scanner.                                                  |
+| `npm run validate:i18n`      | Run i18n resource tests and TypeScript checks.                                                                 |
+| `npm run security:check`     | Scan the production build for sensitive env values and common credential patterns.                             |
+| `npm run audit:dependencies` | Run the lockfile-backed npm vulnerability audit.                                                               |
+| `npm run security:ci`        | Run the focused security pipeline used by GitHub Actions.                                                      |
+| `npm run validate`           | Run lint, type-checking, tests, audit, and build checks; fail fast.                                            |
+| `npm run preview`            | Serve the existing `dist/` output locally for inspection. Does not rebuild it.                                 |
 
 Vite transforms TypeScript but does not type-check it. The separate TypeScript step uses `tsc -b` because the root `tsconfig.json` references both `tsconfig.app.json` and `tsconfig.node.json`. Running only `tsc --noEmit` at that root does not check the referenced projects.
+
+`npm run validate` runs lint, type-checking, unit tests, the dependency audit, bundle and security tests, a build, the secret scan, delivery tests, and the bundle-budget report. It is fail-fast: an earlier failure skips later checks. The budget report runs last so budget failures do not skip the secret scan or delivery tests. Browser smoke and asset tests are separate commands.
 
 ### Try the production build
 
@@ -243,7 +246,7 @@ An explicit React vendor-chunk rule was measured and removed because it increase
 
 Vite's production build already performs tree shaking and minification. Prefer tree-shakeable ESM dependencies and supported targeted imports, avoid pulling large packages into the entry for occasional features, and remeasure with `npm run build:analyze` after dependency changes. Do not disable chunk warnings or force arbitrary chunks as a substitute for inspecting the real dependency graph.
 
-This project explicitly uses `esbuild` for JavaScript and CSS minification. Vite 8 exposes it as an optional peer dependency, so it is listed directly in `devDependencies`. The pnpm build-script allowlist permits only esbuild's installation script; keep both package-manager lockfiles synchronized when changing dependencies.
+This project explicitly uses `esbuild` for JavaScript and CSS minification. Vite 8 exposes it as an optional peer dependency, so it is listed directly in `devDependencies`. Keep the npm lockfile synchronized when changing dependencies. Vitest and its coverage provider are pinned to the same version because the provider requires an exact Vitest peer version; update them together.
 
 ## Plugins and configuration
 

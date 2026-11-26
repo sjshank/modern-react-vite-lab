@@ -9,7 +9,8 @@ import prettier from 'eslint-config-prettier'; // Prettier configuration for ESL
 
 // ESLint configuration for TypeScript and React projects
 export default defineConfig([
-  globalIgnores(['dist']), // Ignore the "dist" directory for linting
+  // Global ignore patterns for ESLint
+  globalIgnores(['node_modules/', 'dist/', 'test-results/', 'public/']),
   {
     files: ['scripts/**/*.mjs'], // Apply this configuration to JavaScript module files in the scripts directory
     extends: [js.configs.recommended], // Use the recommended ESLint rules for JavaScript files
