@@ -27,7 +27,9 @@ async function collectFiles(directory) {
   for (const entry of await readdir(directory, { withFileTypes: true })) {
     const path = resolve(directory, entry.name);
     if (entry.isDirectory()) files.push(...(await collectFiles(path)));
-    else if (/\.(?:html|css|js|mjs|json|svg)$/.test(entry.name))
+    else if (
+      /\.(?:html|css|js|mjs|json|svg|txt|map|xml|webmanifest)$/.test(entry.name)
+    )
       files.push(path);
   }
   return files;

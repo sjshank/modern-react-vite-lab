@@ -9,7 +9,7 @@
     "test:coverage": "vitest run --coverage",
     "test:smoke": "playwright test",
     "type-check": "tsc -b",
-    "build": "npm run assets:optimize && vite build",
+    "build": "vite build",
     "build:analyze": "npm run build && npm run bundle:report",
     "bundle:report": "node scripts/bundle-report.mjs",
     "test:bundle": "node --test scripts/bundle-report.test.mjs",
@@ -22,10 +22,10 @@
     "security:ci": "npm run audit:dependencies && npm run test:bundle && npm run test:security && vite build && npm run security:check && npm run test:delivery",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "validate": "npm run lint && npm run audit:dependencies && npm run test:bundle && npm run test:security && npm run build:analyze && npm run security:check && npm run test:delivery",
+    "validate": "npm run lint && npm run type-check && npm test && npm run audit:dependencies && npm run test:bundle && npm run test:security && npm run build && npm run security:check && npm run test:delivery && npm run bundle:report",
     "preview": "vite preview",
     "test:i18n": "vitest run src/tests/i18n.test.ts",
-    "validate:i18n": "pnpm test:i18n && pnpm type-check",
+    "validate:i18n": "npm run test:i18n && npm run type-check",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "knip": "knip",
@@ -81,7 +81,7 @@
     "typescript": "~6.0.3",
     "typescript-eslint": "^8.72.1",
     "vite": "^8.3.6",
-    "vitest": "^5.1.1",
+    "vitest": "5.1.1",
     "wrangler": "^4.168.0"
   }
 }

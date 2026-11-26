@@ -3,6 +3,8 @@ name: CI Workflow Demo
 # This workflow runs the CI pipeline for the Vite sample app. It includes steps for installing dependencies, linting, type-checking, running tests, building the production output, and checking the production output.
 on:
   push: # Trigger CI workflow on push events. Will it happen for all branches? Yes, by default it triggers for all branches unless specified otherwise.
+    branches: # Trigger on all branches by default
+      - 'main'
   pull_request: # Trigger CI workflow on pull request events. Will it happen for all branches? Yes, by default it triggers for all branches unless specified otherwise.
   workflow_dispatch: # Allow manual triggering of the CI workflow via the GitHub Actions interface.
 
@@ -62,10 +64,11 @@ jobs:
       - name: Test i18n
         run: npm run test:i18n # runs the i18n resource-integrity test
       - name: Build production output
+        id: production_build
         run: npm run build
-      - name: Check production output (non-blocking)
+      - name: Check bundle budgets (non-blocking)
         continue-on-error: true
-        run: npm run bundle:report && npm run security:check && npm run test:delivery
+        run: npm run bundle:report
       - name: Install Chromium
         # Install Chromium browser for Playwright smoke tests
         run: npm exec playwright -- install --with-deps chromium

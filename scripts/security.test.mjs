@@ -43,13 +43,19 @@ test('development and preview security headers are explicit', async () => {
   assert.equal(config.preview.headers['Strict-Transport-Security'], undefined);
 });
 
-function runSecretScan(t, { envContents, assetContents, environment = {} }) {
+function runSecretScan(
+  t,
+  { envContents, assetContents, assetName = 'index.js', environment = {} },
+) {
   const root = mkdtempSync(resolve(tmpdir(), 'vite-security-test-'));
   t.after(() => rmSync(root, { recursive: true, force: true }));
   const dist = resolve(root, 'dist');
   mkdirSync(dist);
   writeFileSync(resolve(root, '.env.production'), envContents);
-  writeFileSync(resolve(dist, 'index.js'), assetContents);
+  if (assetName !== 'index.js') {
+    writeFileSync(resolve(dist, 'index.js'), "const publicLabel = 'demo';");
+  }
+  writeFileSync(resolve(dist, assetName), assetContents);
   return spawnSync(process.execPath, [scanner, `--root=${root}`], {
     encoding: 'utf8',
     env: { ...process.env, ...environment },
@@ -94,3 +100,16 @@ test('client secret check detects high-confidence credentials in built assets', 
   assert.match(result.stderr, /high-confidence secret pattern/);
   assert.doesNotMatch(result.stderr, /AKIAABCDEFGHIJKLMNOP/);
 });
+
+for (const extension of ['txt', 'map', 'xml', 'webmanifest']) {
+  test(`client secret check detects server-only values in .${extension} assets`, (t) => {
+    const result = runSecretScan(t, {
+      envContents: 'SERVER_ONLY_DEMO=unique-server-only-secret-marker\n',
+      assetName: `asset.${extension}`,
+      assetContents: 'unique-server-only-secret-marker',
+    });
+    assert.equal(result.status, 1, result.stderr);
+    assert.match(result.stderr, /SERVER_ONLY_DEMO/);
+    assert.doesNotMatch(result.stderr, /unique-server-only-secret-marker/);
+  });
+}

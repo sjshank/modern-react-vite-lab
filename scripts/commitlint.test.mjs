@@ -19,7 +19,7 @@ test('commit messages require a ticket and a subject', () => {
   ];
 
   for (const [message, valid] of cases) {
-    const result = spawnSync('pnpm', ['exec', 'commitlint'], {
+    const result = spawnSync('npm', ['exec', '--no', '--', 'commitlint'], {
       cwd: root,
       encoding: 'utf8',
       input: message,
