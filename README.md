@@ -28,6 +28,8 @@ It then checks production output and runs a required Chromium smoke test against
 
 The workflow uses Node.js 24 and the npm lockfile. `npm run build` optimizes assets before invoking Vite; type-checking is a separate step. CI supplies a public sample environment value because local `.env` files are ignored. `npm test` runs Vitest once; the existing security workflow remains separate.
 
+For Cloudflare builds, use Node.js 24, the committed npm lockfile, `npm run build` as the build command, and `dist` as the output directory. The committed `.npmrc` includes development dependencies even when `NODE_ENV=production`, because the build requires `sharp`, SVGO, Vite, and its plugins. Do not omit optional dependencies: Sharp needs its platform-specific native packages. If a custom install command is configured, use `npm ci --include=dev --include=optional`; clear the build cache and redeploy if an existing install is stale.
+
 To try it, push a branch and open a pull request, then select **Actions** on GitHub and open **CI Workflow Demo** to inspect each step's logs. Alternatively, select **Run workflow** in the Actions tab. Steps stop at the first failure unless explicitly configured otherwise. To block merging when CI fails, configure a branch protection rule or ruleset for the target branch and require the `ci` job's status check; the workflow alone does not enforce this.
 
 The current combined production-output step uses `continue-on-error: true`: budget failures remain visible but do not block CI; its chained secret and delivery checks are skipped if the budget fails. The separate browser smoke test remains required. All other gates fail normally without bypassing existing app lint/type errors. Local bundle-report and validation commands still enforce budgets.
@@ -99,7 +101,7 @@ Application-owned images are imported in `src/App.tsx`: Vite tracks their depend
 
 ### Optimization
 
-Run `npm run assets:optimize` after adding or editing assets. It recursively discovers files in `src/assets/` and `public/`, including nested directories and uppercase extensions. It is manual, not a build hook; rebuild after running it.
+`npm run build` runs asset optimization before Vite. You can also run `npm run assets:optimize` after adding or editing assets; it recursively discovers files in `src/assets/` and `public/`, including nested directories and uppercase extensions.
 
 - **SVG:** SVGO conservatively removes metadata/comments and compacts markup without changing path geometry, colors, viewBoxes, or IDs. Keeping sprite IDs matters for external `icons.svg#...` references.
 - **PNG/WebP:** Sharp recompresses static 8-bit images in the same format, preserving metadata. PNG uses lossless compression; WebP uses lossless encoding. A smaller result is checked against the original decoded pixels before replacement.
